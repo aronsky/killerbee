@@ -281,10 +281,10 @@ class RZUSBSTICK:
                 #response = ''.join([chr(x) for x in response])
                 #response = response.pop()
             except usb.core.USBError as e:
-                if e.errno != 110: #Not Operation timed out
+                if (e.errno != 110) and not (len(e.args) >= 1 and e.args[0] == 60): #Not Operation timed out
                     print "Error args:", e.args
                     raise e
-                elif e.errno == 110:
+                else:
                     print "DEBUG: Received operation timed out error ...attempting to continue."
         return response
 
@@ -320,10 +320,10 @@ class RZUSBSTICK:
 #                response = self.dev.read(RZ_USB_RESPONSE_EP, self.dev.bMaxPacketSize0, timeout=500)
 #                response = response.pop()
             except usb.core.USBError as e:
-                if e.errno != 110: #Not Operation timed out
+                if (e.errno != 110) and not (len(e.args) >= 1 and e.args[0] == 60): #Not Operation timed out
                     print "Error args:", e.args
                     raise e
-                elif e.errno == 110:
+                else:
                     print "DEBUG: Received operation timed out error ...attempting to continue."
         #time.sleep(0.0005)
         response = self.__usb_read()
@@ -553,7 +553,7 @@ class RZUSBSTICK:
                 try:
                     pdata = self.dev.read(RZ_USB_PACKET_EP, self.dev.bMaxPacketSize0, timeout=timeout)
                 except usb.core.USBError as e:
-                    if e.errno != 110: #Operation timed out
+                    if (e.errno != 110) and not (len(e.args) >= 1 and e.args[0] == 60): #Operation timed out
                         print("Error args: {}".format(e.args))
                         raise e
                         #TODO error handling enhancements for USB 1.0
